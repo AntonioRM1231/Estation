@@ -1,0 +1,31 @@
+CREATE DATABASE estacion 
+USE estacion
+CREATE TABLE mission(
+	m_id INT AUTO_INCREMENT PRIMARY KEY,
+    m_name VARCHAR(50) NOT NULL,
+    m_date DATE NOT NULL, 
+    m_place VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE vehicle(
+	v_id INT AUTO_INCREMENT PRIMARY KEY,
+    v_name VARCHAR(50) NOT NULL,
+    v_type VARCHAR(50) NOT NULL,
+    v_function VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE trama(
+	t_id INT AUTO_INCREMENT PRIMARY KEY,
+    t_data VARCHAR(50);
+    fk_m_id INT,
+    fk_v_id INT,
+    
+    FOREIGN KEY (fk_m_id) REFERENCES mission(m_id)
+    ON DELETE CASCADE ON UPDATE CASCADE, 
+    
+    FOREIGN KEY (fk_v_id) REFERENCES vehicle(v_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+);
+USE estacion
+SELECT * FROM vehicle
+
