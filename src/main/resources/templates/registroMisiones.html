@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Misión</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <img src="./assets/logo_upiita_blanco.png" alt="Logo Hypernova Aerospace" class="me-3">
+        <h1>Estación Terrena</h1>
+        <img src="./assets/imagen1.png" alt="Logo Hypernova Aerospace" class="ms-3">
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Index.html">Hypernova Aerospace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Registro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="graficas.html">Gráficas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="VisualizarMisiones.html">Misiones & Vehiculos</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Contenedor para Registro de Misiones -->
+        <div class="container mb-5">
+            <h2 class="mb-4">Registro de Misiones</h2>
+            <form id="missionForm">
+                <div class="mb-3">
+                    <label for="missionName" class="form-label">Nombre de la Misión</label>
+                    <input type="text" class="form-control" id="missionName">
+                </div>
+                <div class="mb-3">
+                    <label for="missionLocation" class="form-label">Lugar</label>
+                    <input type="text" class="form-control" id="missionLocation">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Registrar Misión</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Contenedor para Registro de Vehículos -->
+        <div class="container">
+            <h2 class="mb-4">Registro de Vehículos</h2>
+            <form id="vehicleForm">
+                <div class="mb-3">
+                    <label for="vehicleName" class="form-label">Nombre del Vehículo</label>
+                    <input type="text" class="form-control" id="vehicleName">
+                </div>
+                <div class="mb-3">
+                    <label for="functionSelect" class="form-label">Función</label>
+                    <select class="form-select" id="functionSelect">
+                        <option selected disabled value="">Elija una opción</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="carga">Carga</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="typeSelect" class="form-label">Tipo</label>
+                    <select class="form-select" id="typeSelect">
+                        <option selected disabled value="">Elija una opción</option>
+                        <option value="cohete3k">Cohete 3k</option>
+                        <option value="cohete1k">Cohete 1k</option>
+                        <option value="cansat">Cansat</option>
+                        <option value="cubesat">Cubesat</option>
+                        <option value="pocketcube">Pocket Cube</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Registrar Vehículo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('missionForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const missionName = document.getElementById('missionName').value.trim();
+            const missionLocation = document.getElementById('missionLocation').value.trim();
+            
+            // Obtener la fecha y la hora actuales
+            const currentDateTime = new Date();
+            const date = currentDateTime.toLocaleDateString();
+            const time = currentDateTime.toLocaleTimeString();
+
+            // Validar si los campos están vacíos
+            if (!missionName || !missionLocation) {
+                alert("Por favor, complete todos los campos antes de registrar la misión.");
+            } else {
+                alert(`Misión registrada exitosamente.\nFecha: ${date}\nHora: ${time}`);
+                document.getElementById("missionForm").reset();
+            }
+        });
+
+        document.getElementById('vehicleForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const vehicleName = document.getElementById('vehicleName').value.trim();
+            const functionSelect = document.getElementById('functionSelect').value;
+            const typeSelect = document.getElementById('typeSelect').value;
+
+            // Validar si los campos están vacíos
+            if (!vehicleName || !functionSelect || !typeSelect) {
+                alert("Por favor, complete todos los campos antes de registrar el vehículo.");
+            } else {
+                alert("Vehículo registrado exitosamente.");
+                document.getElementById("vehicleForm").reset();
+            }
+        });
+    </script>
+
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="mb-0">© 2024 Hypernova Aerospace. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Gráficas - Sensores</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Contenedor para los sensores */
+        .sensor-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* Círculo interno para mostrar el valor */
+        .inner-circle {
+            position: absolute;
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            transform: rotate(180deg);
+        }
+
+        /* Círculo externo (anillo de progreso) */
+        .outer-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-180deg); /* Rotar 90 grados a la izquierda */
+            background: conic-gradient(
+                lightgray 0%,
+                lightgray 100%
+            ); /* Color de fondo del anillo */
+        }
+
+        /* Colores de gradiente según valor */
+        .low {
+            background: conic-gradient(lightblue 0%, lightblue 0%, lightgray 0%);
+        }
+        .medium {
+            background: conic-gradient(gold 0%, gold 0%, lightgray 0%);
+        }
+        .high {
+            background: conic-gradient(tomato 0%, tomato 0%, lightgray 0%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Ingrese Valores para los Sensores</h2>
+
+        <!-- Formulario para el sensor de temperatura -->
+        <div class="sensor-container">
+            <h4>Temperatura</h4>
+            <form id="temperatureForm" class="d-flex justify-content-center">
+                <input type="number" id="temperatureInput" placeholder="Temperatura (°C)" required>
+                <button type="submit" class="btn btn-primary ms-3">Actualizar</button>
+            </form>
+            <div class="outer-circle" id="outerCircleTemp">
+                <div class="inner-circle">
+                    <span id="tempValue">0°C</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario para el sensor de presión -->
+        <div class="sensor-container">
+            <h4>Presión</h4>
+            <form id="pressureForm" class="d-flex justify-content-center">
+                <input type="number" id="pressureInput" placeholder="Presión (hPa)" required>
+                <button type="submit" class="btn btn-primary ms-3">Actualizar</button>
+            </form>
+            <div class="outer-circle" id="outerCirclePressure">
+                <div class="inner-circle">
+                    <span id="pressureValue">0 hPa</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Círculo para el sensor de altitud -->
+        <div class="sensor-container">
+            <h4>Altitud Calculada</h4>
+            <div class="outer-circle" id="outerCircleAltitude">
+                <div class="inner-circle">
+                    <span id="altitudeValue">0 m</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const P0 = 1013.25; // Presión a nivel del mar (hPa)
+        const R = 8.31432; // Constante de gases (J/(mol·K))
+        const M = 0.0289644; // Masa molar del aire (kg/mol)
+        const g = 9.80665; // Gravedad (m/s^2)
+        const L = 0.0065; // Gradiente de temperatura (K/m)
+
+        // Función para calcular altitud con presión
+        function calculateAltitude(pressureHpa, temperatureCelsius) {
+            const T = temperatureCelsius + 273.15; // Convertir a Kelvin
+            return (T / L) * (Math.pow(pressureHpa / P0, -R * L / (g * M)) - 1);
+        }
+
+        // Actualizar el círculo de progreso
+        function updateCircle(outerCircle, valueSpan, value, minValue, maxValue, unit) {
+            valueSpan.innerHTML = `${value.toFixed(2)} ${unit}`;
+            let fillPercent = ((value - minValue) / (maxValue - minValue)) * 100;
+            if (fillPercent < 0) fillPercent = 0;
+            if (fillPercent > 100) fillPercent = 100;
+
+            let color;
+            if (fillPercent < 33) {
+                color = "lightblue";
+            } else if (fillPercent < 66) {
+                color = "gold";
+            } else {
+                color = "tomato";
+            }
+
+            outerCircle.style.background = `conic-gradient(${color} ${fillPercent}%, lightgray ${fillPercent}%)`;
+        }
+
+        document.getElementById('pressureForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const pressureHpa = parseFloat(document.getElementById('pressureInput').value);
+            const temperatureCelsius = parseFloat(document.getElementById('temperatureInput').value);
+
+            if (isNaN(pressureHpa) || isNaN(temperatureCelsius)) {
+                alert("Por favor, ingresa valores válidos.");
+                return;
+            }
+
+            const altitude = calculateAltitude(pressureHpa, temperatureCelsius);
+
+            // Actualizar los círculos
+            updateCircle(
+                document.getElementById('outerCirclePressure'),
+                document.getElementById('pressureValue'),
+                pressureHpa,
+                300, 1100, "hPa"
+            );
+
+            updateCircle(
+                document.getElementById('outerCircleAltitude'),
+                document.getElementById('altitudeValue'),
+                altitude,
+                0, 3500, "m"
+            );
+        });
+
+        document.getElementById('temperatureForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const temperature = parseFloat(document.getElementById('temperatureInput').value);
+
+            updateCircle(
+                document.getElementById('outerCircleTemp'),
+                document.getElementById('tempValue'),
+                temperature,
+                -30, 100, "°C"
+            );
+        });
+    </script>
+
+</body>
+
+</html>
