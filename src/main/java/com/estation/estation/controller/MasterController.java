@@ -15,4 +15,9 @@ public class MasterController {
     public String getIndex(){
         return "index";
     }
+
+    @GetMapping("/graficas")
+    public String getGraficas(){
+        return "graficas";
+    }
 }
