@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de Misiones y Vehículos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <img src="./assets/logo_upiita_blanco.png" alt="Logo Hypernova Aerospace" class="me-3">
+        <h1>Estación Terrena</h1>
+        <img src="./assets/imagen1.png" alt="Logo Hypernova Aerospace" class="ms-3">
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Index.html">Hypernova Aerospace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="registroMisiones.html">Registro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="graficas.html">Gráficas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Misiones & Vehiculos</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Seleccione una Misión</h2>
+
+        <!-- Combobox para misiones -->
+        <div class="mb-3">
+            <label for="missionSelect" class="form-label">Misiones disponibles</label>
+            <select class="form-select" id="missionSelect">
+                <option selected disabled value="">Seleccione una misión</option>
+            </select>
+        </div>
+
+        <!-- Tabla para información de la misión -->
+        <div id="missionInfoContainer" style="display: none;">
+            <h3>Información de la Misión</h3>
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Atributo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="missionInfoTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-5">
+
+        <h2>Seleccione un Vehículo</h2>
+
+        <!-- Combobox para vehículos -->
+        <div class="mb-3">
+            <label for="vehicleSelect" class="form-label">Vehículos disponibles</label>
+            <select class="form-select" id="vehicleSelect">
+                <option selected disabled value="">Seleccione un vehículo</option>
+            </select>
+        </div>
+
+        <!-- Tabla para información del vehículo -->
+        <div id="vehicleInfoContainer" style="display: none;">
+            <h3>Información del Vehículo</h3>
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Atributo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicleInfoTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="mb-0">© 2024 Hypernova Aerospace. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Datos simulados de misiones
+        const missions = [
+            {
+                name: "Misión Lunar",
+                location: "Luna",
+                date: "2024-11-10",
+                time: "14:30"
+            },
+            {
+                name: "Exploración Marte",
+                location: "Marte",
+                date: "2025-06-15",
+                time: "09:00"
+            },
+            {
+                name: "Satélite Geoestacionario",
+                location: "Órbita geoestacionaria",
+                date: "2023-12-01",
+                time: "18:45"
+            }
+        ];
+
+        // Datos simulados de vehículos
+        const vehicles = [
+            {
+                name: "Cohete Falcon",
+                function: "Transporte",
+                type: "Cohete 3K"
+            },
+            {
+                name: "Cubesat Explorer",
+                function: "Carga",
+                type: "Cubesat"
+            },
+            {
+                name: "Pocket Cube Alpha",
+                function: "Carga",
+                type: "Pocket Cube"
+            }
+        ];
+
+        const missionSelect = document.getElementById("missionSelect");
+        const vehicleSelect = document.getElementById("vehicleSelect");
+        const missionInfoContainer = document.getElementById("missionInfoContainer");
+        const vehicleInfoContainer = document.getElementById("vehicleInfoContainer");
+        const missionInfoTableBody = document.getElementById("missionInfoTableBody");
+        const vehicleInfoTableBody = document.getElementById("vehicleInfoTableBody");
+
+        // Llenar combobox de misiones
+        function populateMissionCombobox() {
+            missions.forEach(mission => {
+                const option = document.createElement("option");
+                option.value = mission.name;
+                option.textContent = mission.name;
+                missionSelect.appendChild(option);
+            });
+        }
+
+        // Llenar combobox de vehículos
+        function populateVehicleCombobox() {
+            vehicles.forEach(vehicle => {
+                const option = document.createElement("option");
+                option.value = vehicle.name;
+                option.textContent = vehicle.name;
+                vehicleSelect.appendChild(option);
+            });
+        }
+
+        // Mostrar información de misión seleccionada
+        missionSelect.addEventListener("change", function () {
+            const selectedMission = missions.find(mission => mission.name === this.value);
+            if (selectedMission) {
+                displayInfo(selectedMission, missionInfoTableBody);
+                missionInfoContainer.style.display = "block";
+            }
+        });
+
+        // Mostrar información de vehículo seleccionado
+        vehicleSelect.addEventListener("change", function () {
+            const selectedVehicle = vehicles.find(vehicle => vehicle.name === this.value);
+            if (selectedVehicle) {
+                displayInfo(selectedVehicle, vehicleInfoTableBody);
+                vehicleInfoContainer.style.display = "block";
+            }
+        });
+
+        // Función para mostrar información en una tabla
+        function displayInfo(data, tableBody) {
+            tableBody.innerHTML = "";
+            Object.keys(data).forEach(key => {
+                const row = document.createElement("tr");
+                const attributeCell = document.createElement("td");
+                const valueCell = document.createElement("td");
+
+                // Traducción de claves
+                const attributeMapping = {
+                    name: "Nombre",
+                    location: "Lugar",
+                    date: "Fecha",
+                    time: "Hora",
+                    function: "Función",
+                    type: "Tipo"
+                };
+
+                attributeCell.textContent = attributeMapping[key] || key;
+                valueCell.textContent = data[key];
+                row.appendChild(attributeCell);
+                row.appendChild(valueCell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Inicializar
+        populateMissionCombobox();
+        populateVehicleCombobox();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
