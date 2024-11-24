@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Gráficas - Sensores</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <img src="./assets/logo_upiita_blanco.png" alt="Logo Hypernova Aerospace" class="me-3">
+        <h1>Estación Terrena</h1>
+        <img src="./assets/imagen1.png" alt="Logo Hypernova Aerospace" class="ms-3">
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Index.html">Hypernova Aerospace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="registroMisiones.html">Registro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Gráficas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="VisualizarMisiones.html">Misiones & Vehiculos</a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="containerForm">
+            <h2 class="mb-4">Ingrese los Valores de los Sensores</h2>
+
+            <!-- Formulario para Presión y Temperatura -->
+            <form id="sensorForm" class="mb-4">
+                <h4>Presión y Temperatura</h4>
+                <div class="mb-3">
+                    <label for="pressureInput" class="form-label">Presión (hPa)</label>
+                    <input type="number" class="form-control" id="pressureInput" placeholder="Ingrese la presión en hPa" required>
+                </div>
+                <div class="mb-3">
+                    <label for="temperatureInput" class="form-label">Temperatura (°C)</label>
+                    <input type="number" class="form-control" id="temperatureInput" placeholder="Ingrese la temperatura en °C" required>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
+
+            <!-- Visualización de Datos -->
+            <div class="mt-4">
+                <h4>Indicadores Visuales</h4>
+                <div class="d-flex justify-content-around mt-4">
+                    <div class="outer-circle" id="outerCircleTemp">
+                        <div class="inner-circle">
+                            <span id="tempValue" class="digital">0°C</span>
+                        </div>
+                    </div>
+                    <div class="outer-circle" id="outerCirclePressure">
+                        <div class="inner-circle">
+                            <span id="pressureValue" class="digital">0 hPa</span>
+                        </div>
+                    </div>
+                    <div class="outer-circle" id="outerCircleAltitude">
+                        <div class="inner-circle">
+                            <span id="altitudeValue" class="digital">0 m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="mb-0">© 2024 Hypernova Aerospace. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        const P0 = 1013.25; // Presión a nivel del mar (hPa)
+        //const P0 = 950; // BRASIL (hPa)
+        const R = 8.31432; // Constante de gases (J/(mol·K))
+        const M = 0.0289644; // Masa molar del aire (kg/mol)
+        const g = 9.80665; // Gravedad (m/s^2)
+        const L = 0.0065; // Gradiente de temperatura (K/m)
+
+        // Función para calcular altitud
+        function calculateAltitude(pressureHpa, temperatureCelsius) {
+            const T = temperatureCelsius + 273.15; // Convertir a Kelvin
+            //return (T / L) * (Math.pow(pressureHpa / P0, R * L / (g)) - 1);
+            return (T / L) * (Math.pow(pressureHpa / P0, -R * L / (g * M)) - 1);
+        }
+
+        // Actualizar el círculo de progreso
+        function updateCircle(outerCircle, valueSpan, value, minValue, maxValue, unit) {
+            valueSpan.innerHTML = `${value.toFixed(2)} ${unit}`;
+            let fillPercent = ((value - minValue) / (maxValue - minValue)) * 100;
+            fillPercent = Math.max(0, Math.min(100, fillPercent));
+
+            let color = fillPercent < 33 ? "lightblue" : fillPercent < 66 ? "gold" : "tomato";
+            outerCircle.style.background = `conic-gradient(${color} ${fillPercent}%, lightgray ${fillPercent}%)`;
+        }
+
+        document.getElementById('sensorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const pressureHpa = parseFloat(document.getElementById('pressureInput').value);
+            const temperatureCelsius = parseFloat(document.getElementById('temperatureInput').value);
+
+            if (isNaN(pressureHpa) || isNaN(temperatureCelsius)) {
+                alert("Por favor, ingresa valores válidos para presión y temperatura.");
+                return;
+            }
+
+            const altitude = calculateAltitude(pressureHpa, temperatureCelsius);
+
+            // Actualizar los indicadores visuales
+            updateCircle(
+                document.getElementById('outerCirclePressure'),
+                document.getElementById('pressureValue'),
+                pressureHpa,
+                300, 1100, "hPa"
+            );
+
+            updateCircle(
+                document.getElementById('outerCircleTemp'),
+                document.getElementById('tempValue'),
+                temperatureCelsius,
+                -30, 100, "°C"
+            );
+
+            updateCircle(
+                document.getElementById('outerCircleAltitude'),
+                document.getElementById('altitudeValue'),
+                altitude,
+                0, 3500, "m"
+            );
+        });
+    </script>
+</body>
+
+</html>
